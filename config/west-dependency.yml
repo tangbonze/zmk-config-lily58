@@ -1,0 +1,92 @@
+# Lily58 DYA Studio 依赖
+#
+# cormoran 模块栈：ZMK main+dya fork + Zephyr 4.1 半双工 UART +
+# 全部 DYA Studio RPC 模块。每项对应 Web UI 的一个功能页。
+manifest:
+  version: 1.2
+  defaults:
+    remote: cormoran
+    revision: main
+  remotes:
+    - name: cormoran
+      url-base: https://github.com/cormoran
+    - name: zmkfirmware
+      url-base: https://github.com/zmkfirmware
+  projects:
+    # 编译命令扩展：提供 `west zmk-build`
+    - name: zmk-west-commands
+      import: true
+
+    # ZMK 主仓库：cormoran fork 的 main+dya 分支
+    # = ZMK main + 自定义 Studio RPC 协议 + 所有 DYA Studio 固件改动
+    - name: zmk
+      import:
+        file: app/west.yml
+      clone-depth: 1
+      revision: main+dya
+
+    # Zephyr：带 nRF 半双工 UART 支持的分支
+    - name: zephyr
+      revision: v4.1.0+zmk-fixes+nrf-half-duplex-uart
+      clone-depth: 1
+      import:
+        name-blocklist:
+          - ci-tools
+          - hal_altera
+          - hal_cypress
+          - hal_infineon
+          - hal_microchip
+          - hal_nxp
+          - hal_openisa
+          - hal_st
+          - hal_xtensa
+          - hal_ti
+          - loramac-node
+          - mcuboot
+          - mcumgr
+          - net-tools
+          - openthread
+          - edtt
+          - trusted-firmware-m
+
+    # ---------------------------------------------------------------------
+    # DYA Studio 扩展模块栈（每项对应 Web UI 的一个功能页）
+    # ---------------------------------------------------------------------
+    # 连接管理：BLE 配置档重命名 / 切换 / 解绑
+    - name: zmk-module-ble-management
+    # 设备设置：电源管理、Zephyr settings 读写
+    - name: zmk-module-settings-rpc
+    # 自定义设置：让普通 Zephyr setting 可在网页编辑
+    - name: zmk-feature-custom-settings
+    # 主机 OS 识别
+    - name: zmk-feature-os-detection
+    # 按连接目标 / 按 OS 自动切换默认层
+    - name: zmk-feature-default-layer
+      revision: codex/custom-rpc-rewrite
+      import: true
+    # 运行时宏
+    - name: zmk-feature-runtime-macro
+      import: true
+    # 运行时组合键
+    - name: zmk-feature-runtime-combo
+      import: true
+    # 输入流：实时回传按键事件（DYA Studio 按键高亮）
+    - name: zmk-feature-input-stream
+    # 物理布局：DYA Studio 网页正确绘制键盘
+    # Lily58 的布局来自 fork 内置 app/dts/layouts/kata0510/lily58.dtsi
+    - name: zmk-feature-module-physical-layout
+    # 输入处理器：鼠标 / 滚轮 / 滚动的运行时调节
+    - name: zmk-module-runtime-input-processor
+    # 快速键位图
+    - name: zmk-feature-fast-keymap
+    # 设备信息：固件版本 / uptime / 分半信息
+    - name: zmk-feature-device-info
+    # 抖键诊断
+    - name: zmk-feature-kscan-diagnostics
+    # 看门狗
+    - name: zmk-feature-watchdog
+    # 电池历史曲线
+    - name: zmk-module-battery-history
+
+  self:
+    path: config

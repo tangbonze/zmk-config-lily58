@@ -1,1 +1,4 @@
 .DS*
+.west/
+build/
+dependencies/

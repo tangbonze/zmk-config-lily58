@@ -1,0 +1,3 @@
+name: lily58-peripheral
+append:
+  EXTRA_CONF_FILE: lily58-peripheral.conf
