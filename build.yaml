@@ -1,4 +1,4 @@
-# Lily58 固件构建矩阵（DYA Studio + 板载 OLED 版）
+# Lily58 固件构建矩阵（DYA Studio + OLED / nice!view）
 #
 # 由 `west zmk-build` 驱动（来自 cormoran/zmk-west-commands）。
 # 注意：artifact 字段名是 `artifact`，不是官方工作流的 `artifact-name`。
@@ -7,8 +7,12 @@
 # 前者装 DYA Studio 全部 Kconfig，后者提供 USB CDC-ACM 传输通道。
 # 漏掉任一都会「编译通过但 DYA Studio 连不上」。
 # peripheral 半边（lily58_right）只带 lily58-peripheral，绝不能开 Studio RPC。
+#
+# nice!view：在左右 shield 后追加 nice_view_adapter nice_view；板载 SSD1306
+# 通过 lily58-no-display snippet 关掉，避免两套显示驱动同时编译。
 ---
 include:
+  # ================= OLED 版本 =================
   ## 左手 = central：OLED + DYA Studio + USB Studio RPC
   - board: nice_nano//zmk
     shield: lily58_left
@@ -20,6 +24,19 @@ include:
     shield: lily58_right
     snippets: [lily58-oled, lily58-peripheral]
     artifact: lily58_right_oled
+
+  # ================= nice!view 版本 =================
+  ## 左手 = central：nice!view + DYA Studio + USB Studio RPC
+  - board: nice_nano//zmk
+    shield: lily58_left nice_view_adapter nice_view
+    snippets: [lily58-no-display, lily58-central, studio-rpc-usb-uart]
+    artifact: lily58_left_niceview
+
+  ## 右手 = peripheral：nice!view
+  - board: nice_nano//zmk
+    shield: lily58_right nice_view_adapter nice_view
+    snippets: [lily58-no-display, lily58-peripheral]
+    artifact: lily58_right_niceview
 
   ## 设置重置固件（刷这个可把 DYA Studio 里改坏的设置恢复默认）
   - board: nice_nano//zmk
