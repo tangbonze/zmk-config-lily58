@@ -79,14 +79,34 @@ Firefox 与 Safari 不支持 Web Serial / Web Bluetooth。
 `snippets/lily58-central/lily58-central.conf` 默认设置了 `CONFIG_ZMK_STUDIO_LOCKING=n`：
 固件上电与断开重连后**保持常开（unlocked）**状态，无需先按解锁键即可直接连接 DYA Studio。
 
-### 默认键位
+## Keymap 布局
+
+以下布局图由 `keymap-drawer` 根据 `config/lily58.keymap` 自动生成并按层拆分（完整合集见 [`keymap-drawer/lily58.svg`](keymap-drawer/lily58.svg)）。
 
 `config/lily58.keymap` 移植自 `kata0510/qmk_firmware`（`add_lily58_rev2` 分支 `keyboards/lily58_rp2040/keymaps/default/keymap.c`），包含 4 层基础布局：
 
-- **Layer 0 (`default_layer`)**：标准 QWERTY + 数字行，拇指区提供 `&mo 1` / `&lt 1 SPACE`（LOWER）与 `&lt 2 ENTER` / `&mo 2`（RAISE）
-- **Layer 1 (`lower_layer`)**：数字符号与小键盘区排布
-- **Layer 2 (`raise_layer`)**：`F1`–`F12`、方向键及常用符号
-- **Layer 3 (`adjust_layer`)**：空白保留层（可在 DYA Studio 中按需自定义）
+| 索引 | 图层名 | 说明 | 进入方式 |
+| --- | --- | --- | --- |
+| 0 | `default` | 标准 QWERTY + 数字行 | 默认层 |
+| 1 | `lower` | 数字符号与数字键区 | 按住 `&mo 1` 或 `&lt 1 SPACE` |
+| 2 | `raise` | `F1`–`F12`、方向键及常用符号 | 按住 `&mo 2` 或 `&lt 2 ENTER` |
+| 3 | `adjust` | 空白保留层（可在 DYA Studio 中按需自定义） | 保留层 |
+
+**默认层（`default`）**
+
+![default 默认层](keymap-drawer/layers/default.svg)
+
+**LOWER 层（`lower`）**
+
+![lower 数字与符号层](keymap-drawer/layers/lower.svg)
+
+**RAISE 层（`raise`）**
+
+![raise 功能与方向层](keymap-drawer/layers/raise.svg)
+
+**ADJUST 层（`adjust`）**
+
+![adjust 保留层](keymap-drawer/layers/adjust.svg)
 
 ## ZMK KeyTester（物理矩阵测试）
 
@@ -128,7 +148,9 @@ make debug-all
 ## 目录结构
 
 ```
-.github/workflows/build.yml   CI 自动编译并打包 lily58-firmware
+.github/workflows/
+  build.yml                   CI 自动编译并打包 lily58-firmware
+  keymap_drawer.yml           keymap-drawer 自动生成 SVG 并按层拆分
 3dmodel/                      外壳与配件 3D 模型（.3mf）
 refers/                       硬件焊接与装机参考图
 config/
@@ -137,6 +159,12 @@ config/
   west-dependency.yml         依赖清单：cormoran/zmk main+dya + DYA 模块栈 + zmk-matrix-tester
   west-isolated.yml           将依赖下载到 ./dependencies
   west.yml                    默认 west manifest 入口
+keymap-drawer/
+  lily58.yaml                 keymap parse 输出的中间描述
+  lily58.svg                  全图层合并 SVG
+  layers/                     按层拆分的 SVG（供 README 嵌入）
+keymap_drawer.config.yaml     keymap-drawer 样式与键码图标映射配置
+tools/split_keymap_svg.py     将 lily58.svg 按层拆分为独立 SVG 的脚本
 snippets/
   lily58-central/             左手专用 Kconfig（ZMK Studio、*_STUDIO_RPC、KeyTester 等）
   lily58-peripheral/          右手专用 Kconfig（仅接收并应用中继设置）
